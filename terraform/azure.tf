@@ -45,7 +45,30 @@ resource "snowflake_stage" "azure_external_stage" {
   directory = "ENABLE = true"  
 }
 
-/*
+resource "snowflake_table" "azure_raw_table" {
+  database                    = snowflake_database.ml_source_db.name
+  schema                      = snowflake_schema.ml_source_schema.name
+  name                        = "PARSED_AZURE_PDF"
+  comment                     = "Table containing raw text from the pdf"
+  data_retention_time_in_days = 1
+  change_tracking             = false
+  column {
+    name     = "RELATIVE_PATH"
+    type     = "VARCHAR(16777216)"
+    nullable = true
+  }
+  column {
+    name     = "FILE_URL"
+    type     = "VARCHAR(16777216)"
+    nullable = true
+  }
+  column {
+    name     = "PARSED_TEXT"
+    type     = "VARCHAR(16777216)"
+    nullable = true
+  }
+}
+
 resource "snowflake_stream" "azure_stream" {
   provider = snowflake.account_admin
   name     = upper("${var.project}_AZURE_STREAM")
@@ -54,4 +77,3 @@ resource "snowflake_stream" "azure_stream" {
   schema   = snowflake_schema.ml_source_schema.name
   comment  = "Azure stream"
 }
-*/
